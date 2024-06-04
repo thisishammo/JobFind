@@ -35,7 +35,7 @@ class Profile(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('profile', uselist=False))
     bio = db.Column(db.Text, nullable=True)
-    resume = db.Column(db.Text, nullable=True)  # This could be a file path
+    resume = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f'<Profile {self.user.username}>'
