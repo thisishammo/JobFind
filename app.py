@@ -124,8 +124,23 @@ def page_not_found(e):
 
 @app.route('/')
 def home():
+    categories = [
+        {"icon": "fa-mail-bulk", "title": "Marketing"},
+        {"icon": "fa-headset", "title": "Customer Service"},
+        {"icon": "fa-user-tie", "title": "Health"},
+        {"icon": "fa-tasks", "title": "Project Management"},
+        {"icon": "fa-chart-line", "title": "Business Development"},
+        {"icon": "fa-hands-helping", "title": "Sales & Communication"},
+        {"icon": "fa-book-reader", "title": "Teaching & Education"},
+        {"icon": "fa-drafting-compass", "title": "Design & Creative"},
+    ]
+
+    for category in categories:
+        category_jobs_count = Job.query.filter_by(category=category["title"]).count()
+        category["vacancies"] = category_jobs_count
+
     jobs = Job.query.all()
-    return render_template('index.html', jobs=jobs)
+    return render_template('index.html', categories=categories, jobs=jobs)
 
 if __name__ == "__main__":
     with app.app_context():
