@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
@@ -61,7 +62,7 @@ class Application(db.Model):
     user = db.relationship('User', backref=db.backref('applications', lazy=True))
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
     job = db.relationship('Job', backref=db.backref('applications', lazy=True))
-    cover_letter = db.Column(db.Text, nullable=True)
+    cover_letter = db.Column(db.Text, nullable=True)    
 
     def __repr__(self):
         return f'<Application {self.user.username} for {self.job.title}>'
@@ -81,6 +82,26 @@ def category():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['pass']
+        
+        user = users.get(email)
+        if user and check_password_hash(user['password'], password):
+            session['email'] = email
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid email or password')
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    return redirect(url_for('login'))
 
 @app.route('/job-detail/<int:job_id>')
 def job_detail(job_id):
