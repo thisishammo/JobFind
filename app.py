@@ -50,6 +50,7 @@ class Job(db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     company = db.relationship('Company', backref=db.backref('jobs', lazy=True))
     location = db.Column(db.String(100), nullable=False)
+    company_logo = db.Column(db.String(255), nullable=True)  # Add this line for company logo URL
 
     def __repr__(self):
         return f'<Job {self.title}>'
@@ -67,9 +68,6 @@ class Application(db.Model):
     def __repr__(self):
         return f'<Application {self.user.username} for {self.job.title}>'
 
-@app.route('/')
-def home():
-    return render_template('index.html')
 
 @app.route('/about')
 def about():
@@ -111,6 +109,7 @@ def job_detail(job_id):
 @app.route('/job-list')
 def job_list():
     jobs = Job.query.order_by(Job.date_posted.desc()).all()
+    print(jobs)
     return render_template('job-list.html', jobs=jobs)
 
 @app.route('/testimonial')
@@ -121,7 +120,12 @@ def testimonial():
 def page_not_found(e):
     return render_template('404.html'), 404
 
+@app.route('/')
+def home():
+    jobs = Job.query.all()
+    return render_template('index.html', jobs=jobs)
+
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        db.create_all()        
     app.run(debug=True)

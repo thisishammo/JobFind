@@ -8,8 +8,8 @@ with app.app_context():
     if not user or not company:
         print("Add a user and a company first.")
     else:
-        job1 = Job(title="Software Developer", description="Develop software applications.", company_id=company.id, location="New York")
-        job2 = Job(title="Data Scientist", description="Analyze data and build models.", company_id=company.id, location="San Francisco")
+        job1 = Job(title="Software Developer", description="Develop software applications.", company_id=company.id, location="New York", company_logo="img/com-logo-1.jpg")
+        job2 = Job(title="Data Scientist", description="Analyze data and build models.", company_id=company.id, location="San Francisco", company_logo="img/com-logo-2.jpg")
 
         db.session.add(job1)
         db.session.add(job2)
