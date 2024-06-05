@@ -1,15 +1,35 @@
 from app import app, db, User, Company, Job
+from datetime import datetime
 
 with app.app_context():
-    # Assuming there is at least one user and one company
     user = User.query.first()
     company = Company.query.first()
 
     if not user or not company:
         print("Add a user and a company first.")
     else:
-        job1 = Job(title="Software Developer", description="Develop software applications.", company_id=company.id, location="New York", company_logo="img/com-logo-1.jpg")
-        job2 = Job(title="Data Scientist", description="Analyze data and build models.", company_id=company.id, location="San Francisco", company_logo="img/com-logo-2.jpg")
+        job1 = Job(
+            title="Software Developer",
+            description="Develop software applications.",
+            date_posted=datetime.utcnow(),
+            company_id=company.id,
+            company=company,
+            location="New York",
+            company_logo="img/com-logo-1.jpg",
+            salary=50000,
+            category="Technology"
+        )
+        job2 = Job(
+            title="Data Scientist",
+            description="Analyze data and build models.",
+            date_posted=datetime.utcnow(),
+            company_id=company.id,
+            company=company,
+            location="San Francisco",
+            company_logo="img/com-logo-2.jpg",
+            salary=70000,
+            category="Data Science"
+        )
 
         db.session.add(job1)
         db.session.add(job2)

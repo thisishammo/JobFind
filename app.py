@@ -50,7 +50,9 @@ class Job(db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     company = db.relationship('Company', backref=db.backref('jobs', lazy=True))
     location = db.Column(db.String(100), nullable=False)
-    company_logo = db.Column(db.String(255), nullable=True)  # Add this line for company logo URL
+    company_logo = db.Column(db.String(255), nullable=False)
+    salary = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return f'<Job {self.title}>'
