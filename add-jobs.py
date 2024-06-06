@@ -31,7 +31,7 @@ with app.app_context():
                 company_id=company.id,
                 company=company,
                 location="Los Angeles",
-                company_logo="img/com-logo-3.jpg",
+                company_logo="com-logo-3.jpg",
                 salary=60000,
                 category=marketing_category['title']
             ),
@@ -42,7 +42,7 @@ with app.app_context():
                 company_id=company.id,
                 company=company,
                 location="Chicago",
-                company_logo="img/com-logo-4.jpg",
+                company_logo="com-logo-4.jpg",
                 salary=40000,
                 category=customer_service_category['title']
             )

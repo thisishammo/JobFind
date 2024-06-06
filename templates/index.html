@@ -52,20 +52,7 @@
                     <a href="{{ url_for('home') }}" class="nav-item nav-link active">Home</a>
                     <a href="{{ url_for('about') }}" class="nav-item nav-link">About</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</a>
-                        <div class="dropdown-menu rounded-0 m-0">
-                            {% if jobs %}
-                            {% for job in jobs %}
-                            <li>
-                                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="dropdown-item">
-                                    {{ job.title }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                            {% else %}
-                            <li>No jobs found.</li>
-                            {% endif %}
-                        </div>
+                        <a href="{{ url_for('job_list') }}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</a>
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -181,7 +168,7 @@
                                             <h5 class="mb-3">{{ job.title }}</h5>
                                             <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ job.location }}</span>
                                             <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>{{ job.category }}</span>
-                                            <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i>{{ job.salary }}</span>
+                                            <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i>Kshs. {{ job.salary }}</span>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">

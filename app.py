@@ -86,14 +86,12 @@ def login():
         email = form.email.data
         password = form.password.data
         
-        # Example code to get the user from the database
         user = User.query.filter_by(email=email).first()
         
         if user and check_password_hash(user.password, password):
-            # Log the user in (your login logic here)
             flash('Logged in successfully!', 'success')
             print('Success')
-            return redirect(url_for('index'))
+            return f"Hello World {user.password}"
         else:
             flash('Invalid email or password', 'danger')
             print('Failed')
@@ -101,8 +99,6 @@ def login():
         print('Form validation failed:', form.errors)
 
     return render_template('login.html', form=form)
-
-
 
 @app.route('/logout')
 @login_required
