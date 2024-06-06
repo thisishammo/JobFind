@@ -1,15 +1,21 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from forms import LoginForm
+import hashlib
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = 'your_secret_key'
 
-# User model to store information about both employers and employees
-class User(db.Model):
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -19,7 +25,6 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-# Company model to store information about companies
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -30,7 +35,6 @@ class Company(db.Model):
     def __repr__(self):
         return f'<Company {self.name}>'
 
-# Profile model to store employee profiles and resumes
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -41,7 +45,6 @@ class Profile(db.Model):
     def __repr__(self):
         return f'<Profile {self.user.username}>'
 
-# Job model to store job postings
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -57,7 +60,6 @@ class Job(db.Model):
     def __repr__(self):
         return f'<Job {self.title}>'
 
-# Application model to store job applications
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_applied = db.Column(db.DateTime, default=datetime.utcnow)
@@ -70,6 +72,49 @@ class Application(db.Model):
     def __repr__(self):
         return f'<Application {self.user.username} for {self.job.title}>'
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        
+        # Example code to get the user from the database
+        user = User.query.filter_by(email=email).first()
+        
+        if user and check_password_hash(user.password, password):
+            # Log the user in (your login logic here)
+            flash('Logged in successfully!', 'success')
+            print('Success')
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid email or password', 'danger')
+            print('Failed')
+    else:
+        print('Form validation failed:', form.errors)
+
+    return render_template('login.html', form=form)
+
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return f"Welcome to the dashboard, {current_user.email}!"
 
 @app.route('/about')
 def about():
@@ -83,26 +128,6 @@ def category():
 def contact():
     return render_template('contact.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['pass']
-        
-        user = users.get(email)
-        if user and check_password_hash(user['password'], password):
-            session['email'] = email
-            return redirect(url_for('index'))
-        else:
-            flash('Invalid email or password')
-    
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('email', None)
-    return redirect(url_for('login'))
-
 @app.route('/job-detail/<int:job_id>')
 def job_detail(job_id):
     job = Job.query.get_or_404(job_id)
@@ -111,7 +136,6 @@ def job_detail(job_id):
 @app.route('/job-list')
 def job_list():
     jobs = Job.query.order_by(Job.date_posted.desc()).all()
-    print(jobs)
     return render_template('job-list.html', jobs=jobs)
 
 @app.route('/testimonial')
@@ -144,5 +168,5 @@ def home():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()        
+        db.create_all()
     app.run(debug=True)
