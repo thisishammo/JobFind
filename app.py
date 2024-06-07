@@ -127,11 +127,6 @@ def apply(job_id):
 
     return render_template('job-detail.html', job=job, job_id=job_id, form=form, application_success=application_success, application_already_submitted=application_already_submitted)
 
-
-
-
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -157,6 +152,10 @@ def login():
         else:
             flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
+
+@app.route('/applications')
+def applications():
+    return render_template('applications.html')
 
 @app.route('/logout')
 @login_required
