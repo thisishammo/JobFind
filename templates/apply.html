@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Apply for {{ job.title }}</h1>
+        <form method="POST" action="{{ url_for('apply', job_id=job.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.cover_letter.label(class="form-label") }}
+                {{ form.cover_letter(class="form-control", rows=10) }}
+            </div>
+            <div class="form-group mt-3">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</body>
+</html>

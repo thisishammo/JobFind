@@ -3,10 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from forms import LoginForm
+from forms import LoginForm, ApplicationForm
 import hashlib
 
-app = Flask(__name__)
+app = Flask(__name__)   
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -62,15 +62,57 @@ class Job(db.Model):
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_applied = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    portfolio = db.Column(db.String(200), nullable=True)
+    resume = db.Column(db.String(200), nullable=False)
+    cover_letter = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('applications', lazy=True))
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
-    job = db.relationship('Job', backref=db.backref('applications', lazy=True))
-    cover_letter = db.Column(db.Text, nullable=True)    
+    date_applied = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Application {self.user.username} for {self.job.title}>'
+        return f'<Application {self.name} for Job ID {self.job_id}>'
+    
+
+To implement the Flask logic for uploading the form details to the database, you'll need to modify your existing code to handle the form submission and database insertion. Below is an updated version of your Flask application with the necessary changes:
+
+python
+Copy code
+from flask import Flask, render_template, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+from forms import ApplicationForm
+from models import Application, Job
+from flask_login import current_user
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'your_secret_key'
+
+db = SQLAlchemy(app)
+
+@app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
+def apply(job_id):
+    job = Job.query.get_or_404(job_id)
+    form = ApplicationForm()
+    if form.validate_on_submit():
+        application = Application(
+            name=form.name.data,
+            email=form.email.data,
+            portfolio=form.portfolio.data,
+            resume=form.file.data.filename,
+            cover_letter=form.coverletter.data,
+            user_id=current_user.id if current_user.is_authenticated else None,
+            job_id=job.id,
+            date_applied=datetime.utcnow()
+        )
+        db.session.add(application)
+        db.session.commit()
+        flash('Your application has been submitted!', 'success')
+        return redirect(url_for('job_detail', job_id=job.id))
+    return render_template('apply.html', form=form, job=job)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -91,7 +133,7 @@ def login():
         if user and check_password_hash(user.password, password):
             flash('Logged in successfully!', 'success')
             print('Success')
-            return f"Hello World {user.password}"
+            return redirect(url_for('job_list'))
         else:
             flash('Invalid email or password', 'danger')
             print('Failed')
