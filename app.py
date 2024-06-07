@@ -73,46 +73,64 @@ class Application(db.Model):
 
     def __repr__(self):
         return f'<Application {self.name} for Job ID {self.job_id}>'
-    
 
-To implement the Flask logic for uploading the form details to the database, you'll need to modify your existing code to handle the form submission and database insertion. Below is an updated version of your Flask application with the necessary changes:
-
-python
-Copy code
-from flask import Flask, render_template, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from forms import ApplicationForm
-from models import Application, Job
 from flask_login import current_user
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key'
-
-db = SQLAlchemy(app)
+def check_if_application_exists(job_id, user_identifier):
+    application_exists = Application.query.filter(
+        (Application.job_id == job_id) & 
+        ((Application.user_id == user_identifier) | (Application.email == user_identifier))
+    ).first() is not None
+    print(f'Checking if application exists for job_id={job_id} and user_identifier={user_identifier}: {application_exists}')
+    return application_exists
 
 @app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
 def apply(job_id):
     job = Job.query.get_or_404(job_id)
     form = ApplicationForm()
+    application_success = False
+    application_already_submitted = False
+
+    user_id = current_user.id if current_user.is_authenticated else None
+
+    # Check if the application already exists
+    user_identifier = user_id if user_id else form.email.data if form.email.data else None
+    application_already_submitted = check_if_application_exists(job_id, user_identifier)
+
+    if application_already_submitted:
+        flash('You have already applied for this job.', 'warning')
+        return render_template('job-detail.html', job=job, job_id=job_id, form=form, application_success=application_success, application_already_submitted=application_already_submitted)
+
     if form.validate_on_submit():
+        print('Form validated')
+
+        # Ensure email is collected when user is not authenticated
+        if user_id is None and not form.email.data:
+            flash('Email is required to apply for this job.', 'warning')
+            return render_template('job-detail.html', job=job, job_id=job_id, form=form, application_success=application_success, application_already_submitted=application_already_submitted)
+
+        print('Creating new application')
         application = Application(
             name=form.name.data,
             email=form.email.data,
             portfolio=form.portfolio.data,
             resume=form.file.data.filename,
             cover_letter=form.coverletter.data,
-            user_id=current_user.id if current_user.is_authenticated else None,
+            user_id=user_id,
             job_id=job.id,
             date_applied=datetime.utcnow()
         )
         db.session.add(application)
         db.session.commit()
         flash('Your application has been submitted!', 'success')
-        return redirect(url_for('job_detail', job_id=job.id))
-    return render_template('apply.html', form=form, job=job)
+        application_success = True
+
+    return render_template('job-detail.html', job=job, job_id=job_id, form=form, application_success=application_success, application_already_submitted=application_already_submitted)
+
+
+
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -120,6 +138,8 @@ def load_user(user_id):
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
+
+from flask_login import login_user
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -131,15 +151,11 @@ def login():
         user = User.query.filter_by(email=email).first()
         
         if user and check_password_hash(user.password, password):
+            login_user(user)
             flash('Logged in successfully!', 'success')
-            print('Success')
             return redirect(url_for('job_list'))
         else:
             flash('Invalid email or password', 'danger')
-            print('Failed')
-    else:
-        print('Form validation failed:', form.errors)
-
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -169,7 +185,8 @@ def contact():
 @app.route('/job-detail/<int:job_id>')
 def job_detail(job_id):
     job = Job.query.get_or_404(job_id)
-    return render_template('job-detail.html', job=job)
+    form=ApplicationForm()
+    return render_template('job-detail.html', job=job, job_id=job_id, form=form)
 
 @app.route('/job-list')
 def job_list():

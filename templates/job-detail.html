@@ -73,7 +73,7 @@
                     </div>
                     <a href="{{ url_for('contact') }}" class="nav-item nav-link">Contact</a>
                 </div>
-                <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Login<i class="fa fa-arrow-right ms-3"></i></a>
+                <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Profile<i class="fa fa-arrow-right ms-3"></i></a>
             </div>
         </nav>
         <!-- Navbar End -->
@@ -128,9 +128,25 @@
                                 <li><i class="fa fa-angle-right text-primary me-2"></i>Diam diam stet erat no est est</li>
                             </ul>
                         </div>
+                        <div>
+                            <style>
+                                .application-success {
+                                    color: black;
+                                    background-color: #d4edda;
+                                    border-color: #c3e6cb;
+                                    padding: 15px;
+                                    border: 1px solid transparent;
+                                    border-radius: .25rem;
+                                    margin-bottom: 20px
+                                }
 
-                        <div class="">
+                            </style>
                             <h4 class="mb-4">Apply For The Job</h4>
+                            {% if application_success or application_already_submitted %}
+                                <div class="application-success">
+                                    Your application was successfully submitted!
+                                </div>
+                            {% else %}
                             <form method="POST" enctype="multipart/form-data" action="{{ url_for('apply', job_id=job_id) }}">
                                 {{ form.hidden_tag() }}
                                 <div class="row g-3">
@@ -159,15 +175,14 @@
                                     </div>
                                 </div>
                             </form>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="col-lg-4">
                         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
                             <h4 class="mb-4">Job Summary</h4>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Published On: {{ job.published_on }}</p>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Vacancy: {{ job.vacancy }}</p>
-                            <p><i class="fa fa-angle-right text-primary me-2"></i>Job Nature: {{ job.nature }}</p>
+                            <p><i class="fa fa-angle-right text-primary me-2"></i>Published On: {{ job.date_posted }}</p>
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Salary: Kshs. {{ job.salary }}</p>
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Location: {{ job.location }}</p>
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Category: {{ job.category }}</p>
