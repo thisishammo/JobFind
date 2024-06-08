@@ -202,6 +202,7 @@ def page_not_found(e):
 
 @app.route('/signup')
 def signup():
+    form=SignupForm()
     return render_template('signup.html', form=form)
 
 @app.route('/')
