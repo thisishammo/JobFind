@@ -6,7 +6,8 @@ import re
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Log In')
+    is_employer = BooleanField('Login as Employer')
+    submit = SubmitField('Login')
 
 class ApplicationForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()], render_kw={"placeholder": "Your Name", "class": "form-control"})
