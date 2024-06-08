@@ -200,6 +200,10 @@ def testimonial():
 def page_not_found(e):
     return render_template('404.html'), 404
 
+@app.route('/signup')
+def signup():
+    return render_template('signup.html', form=form)
+
 @app.route('/')
 def home():
     categories = [
