@@ -19,8 +19,9 @@ class ApplicationForm(FlaskForm):
     submit = SubmitField('Apply', render_kw={"class": "btn btn-primary w-100"})
 
 class SignupForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
-    username = StringField('Username', validators=[DataRequired()], render_kw={"placeholder": "Username"})
-    password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')], render_kw={"placeholder": "Confirm Password"})
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    is_employer = BooleanField('Register as Employer')
     submit = SubmitField('Sign Up')

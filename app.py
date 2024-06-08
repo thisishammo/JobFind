@@ -200,9 +200,18 @@ def testimonial():
 def page_not_found(e):
     return render_template('404.html'), 404
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    form=SignupForm()
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password, is_employer=form.is_employer.data)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('job_list'))
+
     return render_template('signup.html', form=form)
 
 @app.route('/')
