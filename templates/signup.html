@@ -21,7 +21,7 @@
                     <img src="{{ url_for('static', filename='img/img-01.png') }}" alt="IMG">
                 </div>
                 <form class="login100-form validate-form" method="POST" action="{{ url_for('signup') }}">
-                    {{ form.csrf_token }}
+                    {{ form.hidden_tag() }}
                     <span class="login100-form-title">
                         Sign Up
                     </span>
@@ -30,7 +30,7 @@
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         </span>
                         {{ form.email.label }}
-                        {{ form.email(class="input100", placeholder="Email") }}
+                        {{ form.email(class_="input100", placeholder="Email") }}
                         <span class="focus-input100"></span>
                     </div>
                     <div class="wrap-input100 validate-input" data-validate="Username is required">
@@ -38,7 +38,7 @@
                             <i class="fa fa-user" aria-hidden="true"></i>
                         </span>
                         {{ form.username.label }}
-                        {{ form.username(class="input100", placeholder="Username") }}
+                        {{ form.username(class_="input100", placeholder="Username") }}
                         <span class="focus-input100"></span>
                     </div>
                     <div class="wrap-input100 validate-input" data-validate="Password is required">
@@ -46,7 +46,7 @@
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                         {{ form.password.label }}
-                        {{ form.password(class="input100", placeholder="Password") }}
+                        {{ form.password(class_="input100", placeholder="Password") }}
                         <span class="focus-input100"></span>
                     </div>
                     <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
@@ -54,11 +54,18 @@
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                         {{ form.confirm_password.label }}
-                        {{ form.confirm_password(class="input100", placeholder="Confirm Password") }}
+                        {{ form.confirm_password(class_="input100", placeholder="Confirm Password") }}
                         <span class="focus-input100"></span>
                     </div>
+                    <div class="wrap-input100">
+                        <span class="symbol-input100">
+                            <i class="fa fa-briefcase" aria-hidden="true"></i>
+                        </span>
+                        {{ form.is_employer.label }}
+                        {{ form.is_employer() }}
+                    </div>
                     <div class="container-login100-form-btn">
-                        {{ form.submit(class="login100-form-btn", value="Sign Up") }}
+                        {{ form.submit(class_="login100-form-btn") }}
                     </div>
                     <div class="text-center p-t-136">
                         <a class="txt2" href="{{ url_for('login') }}">
