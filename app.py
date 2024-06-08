@@ -142,18 +142,17 @@ from flask_login import login_user
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-        
-        user = User.query.filter_by(email=email).first()
-        
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            flash('Logged in successfully!', 'success')
-            return redirect(url_for('job_list'))
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            if form.is_employer.data == user.is_employer:
+                login_user(user)
+                return redirect(url_for('job_list'))
+            else:
+                flash('Employer/Employee status mismatch', 'danger')
         else:
-            flash('Invalid email or password', 'danger')
+            flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', form=form)
+
 
 @app.route('/applications')
 def applications():
