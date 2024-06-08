@@ -143,7 +143,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if user and check_password_hash(user.password, form.password.data):
             if form.is_employer.data == user.is_employer:
                 login_user(user)
                 return redirect(url_for('job_list'))
