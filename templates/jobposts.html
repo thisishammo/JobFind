@@ -4,18 +4,20 @@
 {% endblock %}
 
 {% block body %}
-    <h1>My Job Posts</h1>
-    {% if companies %}
-        <ul>
-            {% for company in companies %}
-                <h2>{{ company.name }}</h2>
-                <p>{{ company.description }}</p>
-                <p>Location: {{ company.location }}</p>
-                <p>Salary: {{ company.salary }}</p>
-                <p>Category: {{ company.category }}</p>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>You haven't posted any jobs.</p>
-    {% endif %}
+    <div style="display: flex;">
+        <h1>My Job Posts</h1>
+        {% if companies %}
+            <ul>
+                {% for company in companies %}
+                    <h2>{{ company.name }}</h2>
+                    <p>{{ company.description }}</p>
+                    <p>Location: {{ company.location }}</p>
+                    <p>Salary: {{ company.salary }}</p>
+                    <p>Category: {{ company.category }}</p>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't posted any jobs.</p>
+        {% endif %}
+    </div>
 {% endblock %}
