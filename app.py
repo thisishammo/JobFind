@@ -100,6 +100,24 @@ def applications1():
     else:
         return render_template('login.html')
 
+from flask import abort
+
+@app.route('/received_applications')
+def received_applications():
+    if current_user.is_authenticated:
+        user_companies = current_user.companies
+        if user_companies:
+            company_id = user_companies[0].id
+            
+            applications = Application.query.filter_by(user_id=current_user.id, company_id=company_id).all()
+            return render_template('applications.html', applications=applications)
+        else:
+            # Handle case where user has no associated companies
+            abort(404, description="User has no associated companies")
+    else:
+        return render_template('login.html')
+
+
 @app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
 def apply(job_id):
     job = Job.query.get_or_404(job_id)
