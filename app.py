@@ -212,15 +212,22 @@ def page_not_found(e):
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
-
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password, is_employer=form.is_employer.data)
         db.session.add(user)
         db.session.commit()
-        login_user(user)
-        return redirect(url_for('job_list'))
-
+        if form.is_employer.data:
+            company = Company(name=form.company_name.data, description=form.company_description.data, user=user)
+            db.session.add(company)
+            db.session.commit()
+            login_user(user)
+            flash('Your account has been created!', 'success')
+            return redirect(url_for('employer_dashboard'))
+        else:
+            login_user(user)
+            flash('Your account has been created!', 'success')
+            return redirect(url_for('job_list'))
     return render_template('signup.html', form=form)
 
 @app.route('/')
