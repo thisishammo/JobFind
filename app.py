@@ -81,6 +81,7 @@ from flask_login import current_user
 @app.route('/employer_dashboard')
 def employer_dashboard():
     user_companies = current_user.companies
+    jobs = Job.query.all()
     return render_template('jobposts.html', companies=user_companies, jobs=jobs)
 
 def check_if_application_exists(job_id, user_identifier):
