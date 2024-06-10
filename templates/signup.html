@@ -65,44 +65,20 @@
                         {{ form.is_employer(id="is_employer", onchange="toggleEmployerFields()") }}
                     </div>
                     <div id="employerFields" style="display:none;">
-                        <div class="wrap-input100 validate-input" data-validate="Job Title is required">
+                        <div class="wrap-input100 validate-input" data-validate="Company Name is required">
                             <span class="symbol-input100">
-                                <i class="fa fa-briefcase" aria-hidden="true"></i>
+                                <i class="fa fa-building" aria-hidden="true"></i>
                             </span>
-                            <label for="job_title">Job Title</label>
-                            <input type="text" name="job_title" class="input100" placeholder="Job Title">
+                            {{ form.company_name.label }}
+                            {{ form.company_name(class_="input100", placeholder="Company Name") }}
                             <span class="focus-input100"></span>
                         </div>
-                        <div class="wrap-input100 validate-input" data-validate="Job Description is required">
+                        <div class="wrap-input100 validate-input" data-validate="Company Description is required">
                             <span class="symbol-input100">
                                 <i class="fa fa-file-text" aria-hidden="true"></i>
                             </span>
-                            <label for="job_description">Job Description</label>
-                            <textarea name="job_description" class="input100" placeholder="Job Description"></textarea>
-                            <span class="focus-input100"></span>
-                        </div>
-                        <div class="wrap-input100 validate-input" data-validate="Location is required">
-                            <span class="symbol-input100">
-                                <i class="fa fa-map-marker" aria-hidden="true"></i>
-                            </span>
-                            <label for="location">Location</label>
-                            <input type="text" name="location" class="input100" placeholder="Location">
-                            <span class="focus-input100"></span>
-                        </div>
-                        <div class="wrap-input100 validate-input" data-validate="Salary is required">
-                            <span class="symbol-input100">
-                                <i class="fa fa-money" aria-hidden="true"></i>
-                            </span>
-                            <label for="salary">Salary</label>
-                            <input type="number" name="salary" class="input100" placeholder="Salary">
-                            <span class="focus-input100"></span>
-                        </div>
-                        <div class="wrap-input100 validate-input" data-validate="Category is required">
-                            <span class="symbol-input100">
-                                <i class="fa fa-tags" aria-hidden="true"></i>
-                            </span>
-                            <label for="category">Category</label>
-                            <input type="text" name="category" class="input100" placeholder="Category">
+                            {{ form.company_description.label }}
+                            {{ form.company_description(class_="input100", placeholder="Company Description") }}
                             <span class="focus-input100"></span>
                         </div>
                     </div>
@@ -116,6 +92,14 @@
                         </a>
                     </div>
                 </form>
+                <script>
+                    function toggleEmployerFields() {
+                        var isEmployer = document.getElementById('is_employer').checked;
+                        var employerFields = document.getElementById('employerFields');
+                        employerFields.style.display = isEmployer ? 'block' : 'none';
+                    }
+                </script>
+                
             </div>
         </div>
     </div>
