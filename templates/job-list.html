@@ -28,6 +28,22 @@
 
     <!-- Template Stylesheet -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .footer {
+            margin-top: auto;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -50,22 +66,8 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
                     <a href="{{ url_for('home') }}" class="nav-item nav-link active">Home</a>
+                    <a href="{{ url_for('applications1') }}" class="nav-item nav-link">Applications</a>
                     <a href="{{ url_for('about') }}" class="nav-item nav-link">About</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="{{ url_for('job_list') }}" class="dropdown-item">Job List</a>
-                        {% for job in jobs %}
-                        <li>
-                            <a href="{{ url_for('job_detail', job_id=job.id) }}" class="dropdown-item">
-                                {{ job.title }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </div>
-                    <div class="nav-item dropdown">                        
-                        <div class="dropdown-menu rounded-0 m-0">
-                            <a href="{{ url_for('category') }}" class="dropdown-item">Job Category</a>                                                       
-                        </div>
-                    </div>
                     <a href="{{ url_for('contact') }}" class="nav-item nav-link">Contact</a>
                 </div>
                 <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-arrow-right ms-3"></i></a>
@@ -93,6 +95,7 @@
                 <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.3s">
                     <div class="tab-content">
                         <div id="tab-1" class="tab-pane fade show p-0 active">
+                            {% if jobs %}
                             {% for job in jobs %}
                             <div class="job-item p-4 mb-4">
                                 <div class="row g-4">
@@ -115,6 +118,11 @@
                                 </div>
                             </div>
                             {% endfor %}
+                            {% else %}
+                            <div>
+                                No jobs available at the moment. Check back later.
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

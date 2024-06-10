@@ -86,6 +86,14 @@ def check_if_application_exists(job_id, user_identifier):
     print(f'Checking if application exists for job_id={job_id} and user_identifier={user_identifier}: {application_exists}')
     return application_exists
 
+@app.route('/applications')
+def applications1():
+    if current_user.is_authenticated:
+        applications = Application.query.filter_by(user_id=current_user.id).all()
+        return render_template('applications.html', applications=applications)
+    else:
+        return render_template('login.html')
+
 @app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
 def apply(job_id):
     job = Job.query.get_or_404(job_id)
