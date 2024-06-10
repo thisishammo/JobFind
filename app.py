@@ -152,11 +152,12 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            if form.is_employer.data == user.is_employer:
+            if user.is_employer:
+                login_user(user)
+                return redirect(url_for('employer_dashboard'))
+            else:
                 login_user(user)
                 return redirect(url_for('job_list'))
-            else:
-                flash('Employer/Employee status mismatch', 'danger')
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', form=form)
@@ -209,6 +210,11 @@ def testimonial():
 def page_not_found(e):
     return render_template('404.html'), 404
 
+@app.route('/employer_dashboard')
+def employer_dashboard():
+    user_companies = current_user.companies
+    return render_template('jobposts.html', companies=user_companies)
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -223,7 +229,7 @@ def signup():
             db.session.commit()
             login_user(user)
             flash('Your account has been created!', 'success')
-            return redirect(url_for('employer'))
+            return redirect(url_for('employer_dashboard'))
         else:
             login_user(user)
             flash('Your account has been created!', 'success')
