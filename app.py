@@ -225,7 +225,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         if form.is_employer.data:
-            company = Company(name=form.company_name.data, description=form.company_description.data, user=user)
+            company = Company(name=form.company_name.data, description=form.company_description.data, user_id=user.id)
             db.session.add(company)
             db.session.commit()
             login_user(user)
