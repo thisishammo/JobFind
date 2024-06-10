@@ -223,7 +223,7 @@ def signup():
             db.session.commit()
             login_user(user)
             flash('Your account has been created!', 'success')
-            return redirect(url_for('employer_dashboard'))
+            return redirect(url_for('employer'))
         else:
             login_user(user)
             flash('Your account has been created!', 'success')
