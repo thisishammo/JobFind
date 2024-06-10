@@ -20,9 +20,11 @@ class ApplicationForm(FlaskForm):
     submit = SubmitField('Apply', render_kw={"class": "btn btn-primary w-100"})
 
 class SignupForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    is_employer = BooleanField('Register as Employer')
+    is_employer = BooleanField('Are you an employer?')
+    company_name = StringField('Company Name')
+    company_description = TextAreaField('Company Description')
     submit = SubmitField('Sign Up')
