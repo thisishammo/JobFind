@@ -26,11 +26,13 @@
         {% if companies %}
             <ul>
                 {% for company in companies %}
-                    <h2>{{ company.name }}</h2>
-                    <p>{{ company.description }}</p>
-                    <p>Location: {{ company.location }}</p>
-                    <p>Salary: {{ company.salary }}</p>
-                    <p>Category: {{ company.category }}</p>
+                    <li>
+                        <h2>{{ company.name }}</h2>
+                        <p>{{ company.description }}</p>
+                        <p>Location: {{ company.location }}</p>
+                        <p>Salary: {{ company.salary }}</p>
+                        <p>Category: {{ company.category }}</p>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}
