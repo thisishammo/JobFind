@@ -78,6 +78,11 @@ class Application(db.Model):
 
 from flask_login import current_user
 
+@app.route('/employer_dashboard')
+def employer_dashboard():
+    user_companies = current_user.companies
+    return render_template('jobposts.html', companies=user_companies)
+
 def check_if_application_exists(job_id, user_identifier):
     application_exists = Application.query.filter(
         (Application.job_id == job_id) & 
@@ -210,10 +215,6 @@ def testimonial():
 def page_not_found(e):
     return render_template('404.html'), 404
 
-@app.route('/employer_dashboard')
-def employer_dashboard():
-    user_companies = current_user.companies
-    return render_template('jobposts.html', companies=user_companies)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
