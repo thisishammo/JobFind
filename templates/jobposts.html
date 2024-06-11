@@ -25,13 +25,13 @@
         <h1>My Job Posts</h1>
         {% if jobs %}
             <ul>
-                {% for company in companies %}
+                {% for job in jobs %}
                     <li>
-                        <h2>{{ company.name }}</h2>
-                        <p>{{ company.description }}</p>
-                        <p>Location: {{ company.location }}</p>
-                        <p>Salary: {{ company.salary }}</p>
-                        <p>Category: {{ company.category }}</p>
+                        <h2>{{ job.title }}</h2>
+                        <p>{{ job.description }}</p>
+                        <p>Location: {{ job.location }}</p>
+                        <p>Salary: {{ job.salary }}</p>
+                        <p>Category: {{ job.category }}</p>
                     </li>
                 {% endfor %}
             </ul>
