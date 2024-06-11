@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
-from forms import LoginForm, ApplicationForm, SignupForm
+from forms import LoginForm, ApplicationForm, SignupForm, JobForm
 import hashlib
 
 app = Flask(__name__)   
@@ -77,6 +77,31 @@ class Application(db.Model):
         return f'<Application {self.name} for Job ID {self.job_id}>'
 
 from flask_login import current_user
+
+@app.route('/post_job', methods=['GET', 'POST'])
+@login_required
+def post_job():
+    form = JobForm()
+    if current_user.is_employer:
+        company = Company.query.filter_by(user_id=current_user.id).first()
+        if form.validate_on_submit():
+            job = Job(
+                title=form.title.data,
+                description=form.description.data,
+                location=form.location.data,
+                salary=form.salary.data,
+                category=form.category.data,
+                company_id=company.id,
+                company_logo=company.user.profile.resume if company.user.profile else 'default_logo.png'
+            )
+            db.session.add(job)
+            db.session.commit()
+            flash('Your job has been posted!', 'success')
+            return redirect(url_for('employer_dashboard'))
+        return render_template('postjobs.html', title='Post Job', form=form)
+    else:
+        flash('Only employers can post jobs.', 'danger')
+        return redirect(url_for('employer_dashboard'))
 
 @app.route('/employer_dashboard')
 def employer_dashboard():

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, HiddenField, FileField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, HiddenField, FileField, BooleanField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo, Length
 import re
 
@@ -28,3 +28,11 @@ class SignupForm(FlaskForm):
     company_name = StringField('Company Name')
     company_description = TextAreaField('Company Description')
     submit = SubmitField('Sign Up')
+
+class JobForm(FlaskForm):
+    title = StringField('Job Title', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField('Job Description', validators=[DataRequired()])
+    location = StringField('Location', validators=[DataRequired(), Length(max=100)])
+    salary = IntegerField('Salary', validators=[DataRequired()])
+    category = SelectField('Category', choices=[('Tech', 'Tech'), ('Finance', 'Finance'), ('Health', 'Health'), ('Education', 'Education')], validators=[DataRequired()])
+    submit = SubmitField('Post Job')
