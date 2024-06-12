@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
@@ -10,7 +10,7 @@ import hashlib
 app = Flask(__name__)   
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = 'irene2024'
 bcrypt = Bcrypt(app)
 
 db = SQLAlchemy(app)
@@ -76,8 +76,6 @@ class Application(db.Model):
     def __repr__(self):
         return f'<Application {self.name} for Job ID {self.job_id}>'
 
-from flask_login import current_user
-
 @app.route('/post_job', methods=['GET', 'POST'])
 @login_required
 def post_job():
@@ -124,8 +122,6 @@ def applications1():
         return render_template('applications.html', applications=applications)
     else:
         return render_template('login.html')
-
-from flask import abort
 
 @app.route('/received_applications')
 def received_applications():
@@ -192,8 +188,6 @@ def load_user(user_id):
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
-
-from flask_login import login_user
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
