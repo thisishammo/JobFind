@@ -226,10 +226,6 @@ def dashboard():
 def about():
     return render_template('about.html')
 
-@app.route('/category')
-def category():
-    return render_template('category.html')
-
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
@@ -244,10 +240,6 @@ def job_detail(job_id):
 def job_list():
     jobs = Job.query.order_by(Job.date_posted.desc()).all()
     return render_template('job-list.html', jobs=jobs)
-
-@app.route('/testimonial')
-def testimonial():
-    return render_template('testimonial.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
