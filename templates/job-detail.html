@@ -49,31 +49,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
-                    <a href="{{ url_for('home') }}" class="nav-item nav-link active">Home</a>
-                    <a href="{{ url_for('about') }}" class="nav-item nav-link">About</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</a>
-                        <div class="dropdown-menu rounded-0 m-0">
-                            <a href="{{ url_for('job_list') }}" class="dropdown-item">Job List</a>
-                            {% for job in jobs %}
-                            <li>
-                                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="dropdown-item">
-                                    {{ job.title }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        
-                        <div class="dropdown-menu rounded-0 m-0">
-                            <a href="{{ url_for('category') }}" class="dropdown-item">Job Category</a>
-                            <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonial</a>
-                        </div>
-                    </div>
-                    <a href="{{ url_for('contact') }}" class="nav-item nav-link">Contact</a>
+                    <a href="{{ url_for('job_list') }}" class="nav-item nav-link active">Jobs</a>
+                    <a href="{{ url_for('applications1') }}" class="nav-item nav-link">Applications</a>
                 </div>
-                <a href="" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Profile<i class="fa fa-arrow-right ms-3"></i></a>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-arrow-right ms-3"></i></a>
             </div>
         </nav>
         <!-- Navbar End -->
@@ -139,13 +118,12 @@
                                     border-radius: .25rem;
                                     margin-bottom: 20px
                                 }
-
                             </style>
                             <h4 class="mb-4">Apply For The Job</h4>
                             {% if application_success or application_already_submitted %}
-                                <div class="application-success">
-                                    Your application was successfully submitted!
-                                </div>
+                            <div class="application-success">
+                                Your application was successfully submitted!
+                            </div>
                             {% else %}
                             <form method="POST" enctype="multipart/form-data" action="{{ url_for('apply', job_id=job_id) }}">
                                 {{ form.hidden_tag() }}

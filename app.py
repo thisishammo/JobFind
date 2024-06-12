@@ -117,7 +117,7 @@ def check_if_application_exists(job_id, user_identifier):
     print(f'Checking if application exists for job_id={job_id} and user_identifier={user_identifier}: {application_exists}')
     return application_exists
 
-@app.route('/applications')
+@app.route('/applications1')
 def applications1():
     if current_user.is_authenticated:
         applications = Application.query.filter_by(user_id=current_user.id).all()
