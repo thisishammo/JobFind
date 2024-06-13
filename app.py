@@ -6,6 +6,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_bcrypt import Bcrypt
 from forms import LoginForm, ApplicationForm, SignupForm, JobForm
 import hashlib
+from sqlalchemy.orm import *
 
 app = Flask(__name__)   
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobfinding.db'
@@ -72,9 +73,12 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
     date_applied = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    job = relationship('Job', backref='applications')
 
     def __repr__(self):
         return f'<Application {self.name} for Job ID {self.job_id}>'
+
 
 @app.route('/post_job', methods=['GET', 'POST'])
 @login_required
@@ -118,10 +122,19 @@ def check_if_application_exists(job_id, user_identifier):
 @app.route('/applications1')
 def applications1():
     if current_user.is_authenticated:
-        applications = Application.query.filter_by(user_id=current_user.id).all()
+        company = Company.query.filter_by(user_id=current_user.id).first()
+        
+        if company:
+            jobs = Job.query.filter_by(company_id=company.id).all()
+            job_ids = [job.id for job in jobs]
+            applications = Application.query.filter(Application.job_id.in_(job_ids)).all()
+        else:
+            applications = []
+
         return render_template('employer_applications.html', applications=applications)
     else:
         return render_template('login.html')
+
 
 @app.route('/received_applications')
 def received_applications():
@@ -208,7 +221,12 @@ def login():
 
 @app.route('/applications')
 def applications():
-    return render_template('applications.html')
+    if current_user.is_authenticated:
+        applications = Application.query.filter_by(user_id=current_user.id).options(joinedload(Application.job)).all()
+        return render_template('applications.html', applications=applications)
+    else:
+        return render_template('login.html')
+
 
 @app.route('/logout')
 @login_required
