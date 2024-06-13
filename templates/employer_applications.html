@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block head %}
+Applications
+{% endblock %}
+{% block body %}
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+    <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+        <h1 class="m-0 text-primary">Jobs</h1>
+    </a>
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto p-4 p-lg-0">
+            <a href="{{ url_for('employer_dashboard') }}" class="nav-item nav-link active">My Job Postings</a>
+            <a href="{{ url_for('applications1') }}" class="nav-item nav-link">Received Applications</a>
+            <a href="{{ url_for('post_job') }}" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Post a job<i class="fa fa-arrow-right ms-3"></i></a>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-arrow-right ms-3"></i></a>
+    </div>
+</nav>
+<!-- Navbar End -->
+<div class="container">
+    <h1 class="text-center mb-5">Applications</h1>
+    {% set applications = current_user.applications %}
+    {% if applications %}
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Job Title</th>
+                    <th>Date Applied</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                {% if application.job.approved %}
+                <tr>
+                    <td>{{ application.name }}</td>
+                    <td>{{ application.email }}</td>
+                    <td>{{ application.job.title }}</td>
+                    <td>{{ application.date_applied.strftime('%Y-%m-%d') }}</td>
+                    <td>Approved</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No applications available.</p>
+    {% endif %}
+</div>
+{% endblock %}

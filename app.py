@@ -119,7 +119,7 @@ def check_if_application_exists(job_id, user_identifier):
 def applications1():
     if current_user.is_authenticated:
         applications = Application.query.filter_by(user_id=current_user.id).all()
-        return render_template('applications.html', applications=applications)
+        return render_template('employer_applications.html', applications=applications)
     else:
         return render_template('login.html')
 
