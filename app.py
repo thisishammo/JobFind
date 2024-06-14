@@ -62,7 +62,6 @@ class Job(db.Model):
 
     def __repr__(self):
         return f'<Job {self.title}>'
-
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -143,14 +142,18 @@ def received_applications():
         if user_companies:
             company_id = user_companies[0].id
             
-            applications = Application.query.filter_by(user_id=current_user.id, company_id=company_id).all()
-            return render_template('applications.html', applications=applications)
+            jobs = Job.query.filter_by(company_id=company_id).all()
+            
+            job_ids = [job.id for job in jobs]
+            
+            applications = Application.query.filter(Application.user_id == current_user.id,
+                                                    Application.job_id.in_(job_ids)).all()
+            
+            return render_template('employer_applications.html', applications=applications)
         else:
-            # Handle case where user has no associated companies
             abort(404, description="User has no associated companies")
     else:
         return render_template('login.html')
-
 
 @app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
 def apply(job_id):

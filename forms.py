@@ -34,5 +34,16 @@ class JobForm(FlaskForm):
     description = TextAreaField('Job Description', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired(), Length(max=100)])
     salary = IntegerField('Salary', validators=[DataRequired()])
-    category = SelectField('Category', choices=[('Tech', 'Tech'), ('Finance', 'Finance'), ('Health', 'Health'), ('Education', 'Education')], validators=[DataRequired()])
+    categories = [
+        {"icon": "fa-mail-bulk", "title": "Marketing"},
+        {"icon": "fa-headset", "title": "Customer Service"},
+        {"icon": "fa-user-tie", "title": "Health"},
+        {"icon": "fa-tasks", "title": "Project Management"},
+        {"icon": "fa-chart-line", "title": "Business Development"},
+        {"icon": "fa-hands-helping", "title": "Sales & Communication"},
+        {"icon": "fa-book-reader", "title": "Teaching & Education"},
+        {"icon": "fa-drafting-compass", "title": "Design & Creative"},
+    ]
+    category_choices = [(category["title"], category["title"]) for category in categories]
+    category = SelectField('Category', choices=category_choices, validators=[DataRequired()])
     submit = SubmitField('Post Job')
