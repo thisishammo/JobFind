@@ -1,10 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, flash, session, abort
+from flask import *
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import *
 from flask_bcrypt import Bcrypt
-from forms import LoginForm, ApplicationForm, SignupForm, JobForm
+from forms import *
 import hashlib
 from sqlalchemy.orm import *
 
